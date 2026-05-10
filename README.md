@@ -27,5 +27,40 @@ Na raiz do projeto, crie um arquivo chamado `.env` e adicione as suas credenciai
 CONFLUENT_BOOTSTRAP_SERVER=seu_endereco_do_bootstrap_server:9092
 CONFLUENT_API_KEY=sua_api_key_aqui
 CONFLUENT_API_SECRET=seu_api_secret_aqui
+```
+### 3. Passo a Passo execução
+## 3.1 Configuração do ambiente 
+```
+# 1. Crie o ambiente virtual forçando o uso do Python 3.11
+python3.11 -m venv .venv
 
+# 2. Ative o ambiente virtual
+source .venv/bin/activate  # No Windows use: .venv\Scripts\activate
+
+# 3. Instale as bibliotecas necessárias
+pip install -r requirements.txt
+```
+## 3.2 Ingestão de dados
+```
+python producer.py
+```
+## 3.3 Subir estrutura no flinker docker
+```
+docker compose up -d
+```
+## 3.4 Preparar ambiente docker
+```
+# 1. Instalar o gerenciador de pacotes pip e o dotenv no JobManager
+docker compose exec jobmanager apt-get update
+docker compose exec jobmanager apt-get install -y python3-pip
+docker compose exec jobmanager pip3 install python-dotenv
+
+# 2. Criar os links simbólicos para que o Flink reconheça o interpretador "python"
+docker compose exec jobmanager ln -s /usr/bin/python3 /usr/bin/python
+docker compose exec taskmanager ln -s /usr/bin/python3 /usr/bin/python
+```
+## 3.5 Execução em tempo real
+```
+docker compose exec jobmanager flink run -py /opt/flink/usrlib/flink_job.py
+```
 
