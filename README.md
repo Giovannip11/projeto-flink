@@ -27,3 +27,12 @@ Na raiz do projeto, crie um arquivo chamado `.env` e adicione as suas credenciai
 CONFLUENT_BOOTSTRAP_SERVER=seu_endereco_do_bootstrap_server:9092
 CONFLUENT_API_KEY=sua_api_key_aqui
 CONFLUENT_API_SECRET=seu_api_secret_aqui
+
+# 1. Crie o ambiente virtual forçando o uso do Python 3.11
+python3.11 -m venv .venv
+
+# 2. Ative o ambiente virtual
+source .venv/bin/activate  # No Windows use: .venv\Scripts\activate
+
+# 3. Instale as bibliotecas necessárias
+pip install -r requirements.txt
