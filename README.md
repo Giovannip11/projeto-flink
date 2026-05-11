@@ -2,7 +2,7 @@
 
 Este projeto realiza a ingestão e o processamento em tempo real de fluxos de dados de tráfego de rede (utilizando o dataset IDS 2017) para simulação de monitoramento de segurança e detecção de DDoS.
 
-## 🛠️ Arquitetura do Projeto
+## Arquitetura do Projeto
 
 1. **Ingestor (Python)**: Lê o dataset local em CSV e envia os dados (JSON) para um tópico no Confluent Cloud (Apache Kafka).
 2. **Mensageria (Confluent Cloud)**: Armazena o fluxo de eventos de forma segura e escalável na nuvem.
@@ -10,7 +10,7 @@ Este projeto realiza a ingestão e o processamento em tempo real de fluxos de da
 
 ---
 
-## 🚀 Como Rodar o Projeto
+## Como Rodar o Projeto
 
 ### 1. Pré-requisitos
 Certifique-se de ter instalado em sua máquina:
