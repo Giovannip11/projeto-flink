@@ -71,12 +71,12 @@ query = """
         -- Se o algoritmo alertou E o dataset tinha pacotes maliciosos na janela: Sucesso!
         CASE
             WHEN COUNT(*) > 20 AND SUM(CASE WHEN `Label` <> 'BENIGN' THEN 1 ELSE 0 END) > 0
-                THEN ' Verdadeiro Positivo'
+                THEN 'Verdadeiro Positivo'
             WHEN COUNT(*) > 20 AND SUM(CASE WHEN `Label` <> 'BENIGN' THEN 1 ELSE 0 END) = 0
-                THEN '❌ Falso Positivo (Alerta Falso)'
+                THEN 'Falso Positivo (Alerta Falso)'
             WHEN COUNT(*) <= 20 AND SUM(CASE WHEN `Label` <> 'BENIGN' THEN 1 ELSE 0 END) > 0
                 THEN ' Falso Negativo (Ataque Não Detectado)'
-            ELSE '✔️ Normal Confirmado'
+            ELSE 'Normal Confirmado'
         END as validacao_sistema
 
     FROM TABLE(
