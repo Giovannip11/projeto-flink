@@ -1,3 +1,8 @@
+"""
+Alunos: Andrei Alves Fracalossi, Giovanni Milan Câmara Pinto, Guilherme Vizzoni Haidmann, Pedro Henrique Santos dos Reis, Rebeca Bravim Garcia
+Turma: CC7M
+"""
+
 import os
 
 from dotenv import load_dotenv
@@ -17,7 +22,7 @@ t_env.get_config().set(
     "file:///opt/flink/usrlib/flink-sql-connector-kafka-3.0.1-1.18.jar",
 )
 
-# Definiçaõ de colunas
+# Definição de colunas
 
 
 source_ddl = f"""
