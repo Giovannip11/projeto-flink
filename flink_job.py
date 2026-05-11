@@ -56,19 +56,34 @@ query = """
         window_end,
         `Source IP`,
         COUNT(*) as total_requisicoes,
-        -- Se passar de 20 requisições em 3 segundos, alerta imediato!
-        -- Ajustamos o limite proporcionalmente ao tempo menor da janela.
+
+        -- 1. NOSSA DETECÇÃO (Algoritmo em Tempo Real)
         CASE
-            WHEN COUNT(*) > 20 THEN ':( ALERTA: DDoS Detectado!'
-            ELSE 'Tráfego Normal'
-        END as status_seguranca
+            WHEN COUNT(*) > 20 THEN 'SUSPEITO (DDoS)'
+            ELSE 'NORMAL'
+        END as deteccao_algoritmo,
+
+        -- 2. GABARITO DO DATASET (O que realmente era)
+        -- Contamos quantos pacotes na janela tinham labels diferentes de 'BENIGN' (ou semelhantes a DDoS)
+        SUM(CASE WHEN `Label` <> 'BENIGN' AND `Label` IS NOT NULL THEN 1 ELSE 0 END) as pacotes_ataque_reais,
+
+        -- 3. VERIFICAÇÃO DE ACURÁCIA
+        -- Se o algoritmo alertou E o dataset tinha pacotes maliciosos na janela: Sucesso!
+        CASE
+            WHEN COUNT(*) > 20 AND SUM(CASE WHEN `Label` <> 'BENIGN' THEN 1 ELSE 0 END) > 0
+                THEN ' Verdadeiro Positivo'
+            WHEN COUNT(*) > 20 AND SUM(CASE WHEN `Label` <> 'BENIGN' THEN 1 ELSE 0 END) = 0
+                THEN '❌ Falso Positivo (Alerta Falso)'
+            WHEN COUNT(*) <= 20 AND SUM(CASE WHEN `Label` <> 'BENIGN' THEN 1 ELSE 0 END) > 0
+                THEN ' Falso Negativo (Ataque Não Detectado)'
+            ELSE '✔️ Normal Confirmado'
+        END as validacao_sistema
+
     FROM TABLE(
-        -- HOP(tabela, coluna_tempo, tamanho_do_salto, tamanho_da_janela)
-        -- Aqui, a janela analisa os últimos 3 segundos, mas se atualiza a cada 1 segundo!
         HOP(TABLE network_source, DESCRIPTOR(ts), INTERVAL '1' SECOND, INTERVAL '3' SECONDS)
     )
     GROUP BY window_start, window_end, `Source IP`
-    -- Filtramos para mostrar no terminal apenas o tráfego que de fato é suspeito ou volumoso
+    -- Filtramos para focar em IPs que estão movimentando a rede
     HAVING COUNT(*) > 10
 """
 
